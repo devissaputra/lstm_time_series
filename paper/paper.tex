@@ -1,21 +1,33 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
-\title{08. LSTM Time-Series Forecasting★}
+\title{LSTM Forecasting for Mauna Loa CO$_2$}
 \author{Devis W. Saputra}
 \begin{document}
 \maketitle
+
 \begin{abstract}
-This manuscript source accompanies the reproducible GitHub technical report. Numerical findings should be regenerated from the repository before academic use.
+I use 24 weeks of Mauna Loa atmospheric CO$_2$ history to forecast the next weekly value with a small LSTM. The evaluation is chronological and normalization is fitted on the training period only.
 \end{abstract}
-\section{Research Objective}
-See the repository README and \texttt{paper/paper.md} for the full research question and rationale.
+
+\section{Question}
+Can a 24-week historical window support useful one-step-ahead forecasting with a compact LSTM?
+
 \section{Data and Method}
-The dataset provenance, processing steps, executable method, validation design, and limitations are documented in the repository.
-\section{Reproducibility}
-Install \texttt{requirements.txt} and execute \texttt{python src/run\_experiment.py}.
+The CO$_2$ series is resampled to weekly means and missing weeks are interpolated. I create 2,260 windows, use the first 1,808 for training, and hold out the final 452. The LSTM has 32 hidden units and a one-value linear output.
+
+\section{Training}
+The model trains for 20 epochs with Adam at learning rate 0.005 and mean-squared error loss.
+
+\section{Results}
+After fitting normalization on the training period only, the recorded hold-out RMSE is 4.4853 and MAE is 4.3378.
+
 \section{Limitations}
-This is a portfolio research artifact rather than a peer-reviewed publication. External validation and stronger comparative experiments are required for publication claims.
+The evaluation uses one chronological split and does not yet include naive or autoregressive baselines. Those comparisons are needed before judging the LSTM's practical value.
+
+\section{Reproduction}
+Install \texttt{requirements.txt} and run \texttt{python src/run\_experiment.py}.
+
 \bibliographystyle{plain}
 \bibliography{references}
 \end{document}
