@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675">
+<rect width="1200" height="675" fill="#f8fafc"/>
+<text x="60" y="75" font-family="Arial" font-size="34" font-weight="700" fill="#0f172a">Sequence Model Representation</text>
+<text x="60" y="112" font-family="Arial" font-size="19" fill="#64748b">Each training example is a 24-step univariate sequence mapped to one next-step CO₂ prediction.</text>
+<rect x="65" y="175" width="420" height="390" rx="22" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="100" y="220" font-family="Arial" font-size="23" font-weight="700" fill="#1e40af">Input window</text>
+<polyline points="110,430 135,390 160,405 185,360 210,375 235,335 260,350 285,305 310,320 335,280 360,295 385,250 410,265 440,230" fill="none" stroke="#2563eb" stroke-width="5"/>
+<line x1="110" y1="465" x2="440" y2="465" stroke="#64748b" stroke-width="2"/>
+<text x="275" y="500" text-anchor="middle" font-family="Arial" font-size="19" fill="#475569">24 weekly observations</text>
+<text x="275" y="535" text-anchor="middle" font-family="Arial" font-size="18" fill="#64748b">shape: 24 × 1</text>
+
+<rect x="535" y="175" width="250" height="390" rx="22" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="660" y="220" text-anchor="middle" font-family="Arial" font-size="23" font-weight="700" fill="#166534">LSTM</text>
+<rect x="590" y="290" width="140" height="120" rx="20" fill="#dcfce7" stroke="#4ade80" stroke-width="3"/>
+<text x="660" y="340" text-anchor="middle" font-family="Arial" font-size="28" font-weight="700" fill="#166534">32</text>
+<text x="660" y="375" text-anchor="middle" font-family="Arial" font-size="19" fill="#334155">hidden units</text>
+<text x="660" y="470" text-anchor="middle" font-family="Arial" font-size="18" fill="#64748b">final hidden state</text>
+
+<rect x="835" y="175" width="300" height="390" rx="22" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="985" y="220" text-anchor="middle" font-family="Arial" font-size="23" font-weight="700" fill="#7e22ce">Forecast head</text>
+<rect x="900" y="300" width="170" height="100" rx="16" fill="#f3e8ff" stroke="#c084fc" stroke-width="3"/>
+<text x="985" y="342" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#6b21a8">Linear 32 → 1</text>
+<text x="985" y="375" text-anchor="middle" font-family="Arial" font-size="18" fill="#334155">next CO₂ value</text>
+<text x="985" y="470" text-anchor="middle" font-family="Arial" font-size="18" fill="#64748b">MSE training objective</text>
+
+<g stroke="#2563eb" stroke-width="5"><path d="M485 365 H535"/><path d="M785 365 H835"/></g>
+</svg>
