@@ -5,17 +5,17 @@
 **Track:** AI Engineering  
 **Difficulty:** ★★★★  
 **Dataset:** Mauna Loa atmospheric CO₂ dataset via statsmodels  
-**Quick description:** Forecast real atmospheric CO₂ observations from lagged historical windows using an LSTM.
+**Quick description:** Forecast real weekly CO₂ observations from 24-week historical windows using a compact LSTM.
 
 ### Suggested website image gallery
 
-![Cover](assets/01_cover.png)
+![Cover](assets/01_cover.svg)
 
-![Data pipeline](assets/02_data_pipeline.png)
+![Time-series pipeline](assets/02_data_pipeline.svg)
 
-![Data/model view](assets/03_data_or_model.png)
+![Sequence model](assets/03_data_or_model.svg)
 
-![Evaluation/results view](assets/04_evaluation_or_results.png)
+![Chronological hold-out evaluation](assets/04_evaluation_or_results.svg)
 
 ### Suggested portfolio copy
-This project demonstrates LSTM, time series, forecasting, temporal split using a reproducible workflow with explicit data provenance, processing, evaluation, limitations, and research documentation. The repository includes executable code and a scientific-style technical report suitable for supervisor review.
+This project trains a compact LSTM to forecast the next weekly Mauna Loa CO₂ observation from the preceding 24 weeks. The model uses a 32-unit recurrent state, an 80/20 chronological split, and one-step-ahead evaluation with RMSE and MAE. The repository also documents a preprocessing limitation in the current implementation: normalization statistics are computed on the full series and should be restricted to the training period in a stricter experiment.
