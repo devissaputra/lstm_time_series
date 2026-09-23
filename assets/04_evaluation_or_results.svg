@@ -1,22 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675">
 <rect width="1200" height="675" fill="#f8fafc"/>
 <text x="60" y="75" font-family="Arial" font-size="34" font-weight="700" fill="#0f172a">Chronological Hold-Out Evaluation</text>
-<text x="60" y="112" font-family="Arial" font-size="19" fill="#64748b">Forecast quality is measured on the final 20% of windows, preserving time order.</text>
+<text x="60" y="112" font-family="Arial" font-size="19" fill="#64748b">The final 20% of sequence windows are kept in time order and are not used for fitting.</text>
 <rect x="60" y="180" width="650" height="360" rx="24" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
-<text x="100" y="225" font-family="Arial" font-size="23" font-weight="700" fill="#1e40af">Observed vs forecast</text>
+<text x="100" y="225" font-family="Arial" font-size="23" font-weight="700" fill="#1e40af">Forecast comparison</text>
 <line x1="115" y1="475" x2="660" y2="475" stroke="#64748b" stroke-width="2"/>
 <polyline points="125,420 165,390 205,405 245,360 285,380 325,335 365,350 405,305 445,325 485,280 525,295 565,250 605,265 650,225" fill="none" stroke="#2563eb" stroke-width="5"/>
 <polyline points="125,435 165,405 205,415 245,375 285,390 325,350 365,365 405,325 445,340 485,300 525,312 565,270 605,280 650,245" fill="none" stroke="#16a34a" stroke-width="5" stroke-dasharray="10 7"/>
 <circle cx="145" cy="575" r="9" fill="#2563eb"/><text x="165" y="582" font-family="Arial" font-size="18" fill="#334155">observed</text>
 <circle cx="300" cy="575" r="9" fill="#16a34a"/><text x="320" y="582" font-family="Arial" font-size="18" fill="#334155">forecast</text>
+<text x="520" y="582" font-family="Arial" font-size="17" fill="#64748b">schematic view</text>
 
 <rect x="760" y="180" width="375" height="360" rx="24" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
-<text x="800" y="230" font-family="Arial" font-size="23" font-weight="700" fill="#0f172a">Forecast metrics</text>
-<text x="800" y="335" font-family="Arial" font-size="62" font-weight="700" fill="#0f172a">5.7811</text>
+<text x="800" y="230" font-family="Arial" font-size="23" font-weight="700" fill="#0f172a">Recorded metrics</text>
+<text x="800" y="335" font-family="Arial" font-size="62" font-weight="700" fill="#0f172a">4.4853</text>
 <text x="800" y="372" font-family="Arial" font-size="22" fill="#475569">RMSE</text>
-<text x="800" y="455" font-family="Arial" font-size="62" font-weight="700" fill="#0f172a">5.3467</text>
+<text x="800" y="455" font-family="Arial" font-size="62" font-weight="700" fill="#0f172a">4.3378</text>
 <text x="800" y="492" font-family="Arial" font-size="22" fill="#475569">MAE</text>
 
-<rect x="210" y="590" width="780" height="50" rx="16" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
-<text x="600" y="622" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#9a3412">Current implementation standardizes using full-series mean and standard deviation before the temporal split.</text>
+<rect x="225" y="590" width="750" height="50" rx="16" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+<text x="600" y="622" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#155e75">Normalization is fitted on the training period only.</text>
 </svg>
