@@ -1,33 +1,26 @@
-\documentclass[11pt]{article}
+\documentclass{article}
+\usepackage{booktabs}
 \usepackage[margin=1in]{geometry}
-\usepackage{hyperref}
-\title{LSTM Forecasting for Mauna Loa CO$_2$}
+\title{LSTM Forecasting for Mauna Loa CO2}
 \author{Devis W. Saputra}
+\date{}
 \begin{document}
 \maketitle
-
 \begin{abstract}
-I use 24 weeks of Mauna Loa atmospheric CO$_2$ history to forecast the next weekly value with a small LSTM. The evaluation is chronological and normalization is fitted on the training period only.
+A compact LSTM is compared with persistence and Ridge autoregression for chronological next-week forecasting of the Mauna Loa CO2 series. Normalization is fitted only on the training period.
 \end{abstract}
-
-\section{Question}
-Can a 24-week historical window support useful one-step-ahead forecasting with a compact LSTM?
-
-\section{Data and Method}
-The CO$_2$ series is resampled to weekly means and missing weeks are interpolated. I create 2,260 windows, use the first 1,808 for training, and hold out the final 452. The LSTM has 32 hidden units and a one-value linear output.
-
-\section{Training}
-The model trains for 20 epochs with Adam at learning rate 0.005 and mean-squared error loss.
-
+\section{Method}
+Twenty-four previous weekly observations predict the next value. The first 80\% of windows are used for training and the last 20\% for evaluation.
 \section{Results}
-After fitting normalization on the training period only, the recorded hold-out RMSE is 4.4853 and MAE is 4.3378.
-
-\section{Limitations}
-The evaluation uses one chronological split and does not yet include naive or autoregressive baselines. Those comparisons are needed before judging the LSTM's practical value.
-
-\section{Reproduction}
-Install \texttt{requirements.txt} and run \texttt{python src/run\_experiment.py}.
-
-\bibliographystyle{plain}
-\bibliography{references}
+\begin{tabular}{lrr}
+\toprule
+Model & RMSE & MAE \\
+\midrule
+Persistence & 0.5135 & 0.4042 \\
+Ridge & 0.4641 & 0.3546 \\
+LSTM & 1.0700 & 0.8540 \\
+\bottomrule
+\end{tabular}
+\section{Interpretation}
+Ridge performs best in this recorded run. The result shows that recurrent complexity does not automatically improve a smooth, autocorrelated series.
 \end{document}

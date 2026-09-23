@@ -1,6 +1,4 @@
-# Reproducing the Experiment
-
-Run:
+# Reproducing the experiment
 
 ```bash
 python -m venv .venv
@@ -9,12 +7,14 @@ pip install -r requirements.txt
 python src/run_experiment.py
 ```
 
-The script sets the PyTorch seed to 42 and uses one CPU thread.
+The weekly CO2 series is converted into 24-week windows and split chronologically. Normalization statistics are calculated only from observations available by the end of the final training window.
 
-The CO2 series is resampled weekly and interpolated. It is converted into 24-week windows, then split chronologically: 80% for training and 20% for evaluation.
+The full run compares persistence, Ridge autoregression, and an LSTM trained for 20 epochs. PyTorch uses seed 42, one CPU thread, and a seeded DataLoader generator.
 
-Normalization is fitted only on the training period. The same training mean and standard deviation are then applied to the held-out period.
+Outputs:
 
-The model trains for 20 epochs with Adam at learning rate 0.005.
+- `results/metrics.json`
+- `results/figures/forecast_comparison.png`
+- `results/figures/training_loss.png`
 
-Results are written to `results/metrics.json`. Record package versions if you need exact numerical reproduction.
+The CI test suite runs a one-epoch smoke test rather than the full 20-epoch training job. Exact neural-network values may vary slightly across PyTorch builds.

@@ -1,73 +1,52 @@
 # LSTM Forecasting for Mauna Loa CO2
 
+[![CI](https://github.com/devissaputra/lstm_time_series/actions/workflows/ci.yml/badge.svg)](https://github.com/devissaputra/lstm_time_series/actions/workflows/ci.yml)
+
 ![Project overview](assets/01_cover.svg)
 
-I built this project to move from static prediction to sequence forecasting. The task is simple to state: use the previous 24 weeks of atmospheric CO2 measurements to predict the next weekly value.
+A leakage-aware sequence-forecasting experiment that asks a harder question than “can an LSTM fit a time series?”:
 
-The model is a compact LSTM trained on the Mauna Loa CO2 series distributed with statsmodels.
+> **Can the LSTM beat simple forecasting baselines on a chronological hold-out set?**
 
-## Data
+## Data and split
 
-The source series is resampled to weekly means and missing weekly values are interpolated.
+The project uses the Mauna Loa atmospheric CO2 series distributed with statsmodels.
 
-For each training example I use:
+- weekly resampling with interpolation
+- 24 previous weeks → next-week target
+- 2,260 windows
+- first 80% for training, final 20% for testing
+- normalization fitted only on the training period
 
-- 24 previous weekly CO2 values as input;
-- the next weekly value as the target.
+No future observations are used to estimate the training mean or standard deviation.
 
-That produces 2,260 sequence windows.
-
-The split is chronological:
-
-- 1,808 training windows;
-- 452 held-out windows.
-
-Normalization is fitted on the training period only, then applied to the held-out period.
-
-## How the experiment works
+## Models
 
 ![Forecasting pipeline](assets/02_data_pipeline.svg)
 
-The model is intentionally small:
+Three approaches are compared:
 
-```text
-24 time steps × 1 feature
-          ↓
-LSTM with 32 hidden units
-          ↓
-final hidden state
-          ↓
-Linear layer: 32 → 1
-          ↓
-next-week CO2 forecast
-```
+1. **Persistence:** predict the next value as the last observed value.
+2. **Ridge autoregression:** fit a linear model to the 24-lag window.
+3. **LSTM:** 32 hidden units followed by a linear head.
 
-Training uses Adam with learning rate 0.005 and mean-squared error loss for 20 epochs.
+The LSTM uses Adam, learning rate 0.005, batch size 64, and 20 epochs.
 
-## Sequence model
+## Recorded results
 
 ![Sequence model](assets/03_data_or_model.svg)
 
-The LSTM reads the 24-week window in order and carries information forward through its hidden state. The final hidden state is used to predict the next value.
-
-## Results
+| Model | RMSE ↓ | MAE ↓ |
+|---|---:|---:|
+| Persistence | 0.5135 | 0.4042 |
+| **Ridge** | **0.4641** | **0.3546** |
+| LSTM | 1.0700 | 0.8540 |
 
 ![Chronological evaluation](assets/04_evaluation_or_results.svg)
 
-After correcting preprocessing so normalization uses training data only, the recorded run produced:
+The neural model does **not** win. Ridge is strongest on this setup, and even persistence beats the LSTM. That is a useful result: recurrent complexity is not automatically valuable when a smooth, highly autocorrelated series can be forecast well from recent lags.
 
-| Metric | Result |
-|---|---:|
-| RMSE | 4.4853 |
-| MAE | 4.3378 |
-| Training windows | 1,808 |
-| Test windows | 452 |
-
-The hold-out set is the final 20% of the sequence windows, so the model is always evaluated on later observations than the ones used for training.
-
-The result is useful as a compact sequence-modeling exercise, but I would not judge forecasting quality from these numbers alone. A stronger study should compare the LSTM with simple baselines such as last-value prediction, moving averages, and autoregressive models.
-
-## Run it
+## Run
 
 ```bash
 python -m venv .venv
@@ -76,10 +55,27 @@ pip install -r requirements.txt
 python src/run_experiment.py
 ```
 
-On Windows, use `.venv\Scripts\activate`.
+Generated outputs are written under `results/`.
 
-## Repository notes
+## Test
 
-- [DATA.md](DATA.md) describes the CO2 series.
-- [REPRODUCIBILITY.md](REPRODUCIBILITY.md) explains the temporal split and rerun steps.
-- [paper/paper.md](paper/paper.md) contains the longer technical write-up.
+```bash
+pip install pytest
+pytest
+```
+
+CI runs model-shape, preprocessing, baseline, and one-epoch smoke tests. The full 20-epoch experiment is not retrained on every commit.
+
+## Engineering details
+
+- chronological split, never random time-series splitting
+- train-only normalization
+- persistence and Ridge baselines
+- deterministic PyTorch seed and DataLoader generator
+- import-safe experiment module
+- behavioural tests and GitHub Actions
+- generated plots separated from curated portfolio graphics
+
+## Limits
+
+This is one historical series and one forecast horizon. A stronger study would add seasonal/ARIMA baselines, rolling-origin evaluation, repeated initialization, uncertainty intervals, longer horizons, and hyperparameter selection on a validation period.
