@@ -1,19 +1,9 @@
-# Portfolio Summary
+# LSTM Forecasting for Mauna Loa CO2
 
-## LSTM Forecasting for Mauna Loa CO2
+**Focus:** leakage-aware sequence forecasting with strong baselines.
 
-I use 24 weeks of historical CO2 measurements to forecast the next weekly value with a 32-unit LSTM.
+A 24-week LSTM forecast is compared with persistence and Ridge autoregression on a chronological hold-out period. Normalization is fitted only on values available during training.
 
-The split is chronological, and normalization is fitted only on the training period.
+Ridge is strongest in the recorded experiment with RMSE 0.4641, followed by persistence at 0.5135. The LSTM reaches RMSE 1.0700. The repository keeps that negative result because recurrent complexity has to beat simple lag-based models before it is justified.
 
-### Images
-
-![Project overview](assets/01_cover.svg)
-
-![Forecasting pipeline](assets/02_data_pipeline.svg)
-
-![Sequence model](assets/03_data_or_model.svg)
-
-![Chronological evaluation](assets/04_evaluation_or_results.svg)
-
-**Key result:** RMSE 4.4853 and MAE 4.3378 on 452 held-out windows after the preprocessing fix.
+The project includes deterministic PyTorch training, train-only preprocessing, behavioural tests, GitHub Actions CI, and separate generated diagnostics.

@@ -1,6 +1,5 @@
 # Quick Description
 
-I use the previous 24 weeks of Mauna Loa CO2 measurements to forecast the next weekly value with a small LSTM. The experiment uses a chronological hold-out split and fits normalization on the training period only.
+A leakage-aware next-week CO2 forecasting experiment comparing persistence, Ridge autoregression, and an LSTM on a chronological hold-out set. Ridge wins, showing why recurrent models need strong time-series baselines.
 
-**Dataset:** Mauna Loa atmospheric CO2  
-**Main ideas:** LSTM, sequence windows, time-series forecasting, temporal validation
+**Main ideas:** LSTM, chronological evaluation, train-only normalization, persistence baseline, Ridge baseline
