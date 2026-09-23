@@ -1,13 +1,20 @@
-# Reproducibility
+# Reproducing the Experiment
 
-This repository uses a single executable entry point: `python src/run_experiment.py`.
+Run:
 
-## Reproduction checklist
-1. Create an isolated Python environment.
-2. Install `requirements.txt`.
-3. Acquire the dataset exactly as documented in `DATA.md`.
-4. Run the experiment from the repository root.
-5. Confirm generated artifacts under `results/` and `assets/`.
-6. Record the Python/package versions if using results in an application or manuscript.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python src/run_experiment.py
+```
 
-Random seeds are fixed where the underlying library supports them. Data splits and target definitions are declared in code. No metric should be copied into academic material unless it was generated from the stated dataset and configuration.
+The script sets the PyTorch seed to 42 and uses one CPU thread.
+
+The CO2 series is resampled weekly and interpolated. It is converted into 24-week windows, then split chronologically: 80% for training and 20% for evaluation.
+
+Normalization is fitted only on the training period. The same training mean and standard deviation are then applied to the held-out period.
+
+The model trains for 20 epochs with Adam at learning rate 0.005.
+
+Results are written to `results/metrics.json`. Record package versions if you need exact numerical reproduction.
