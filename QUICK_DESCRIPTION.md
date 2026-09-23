@@ -1,7 +1,6 @@
 # Quick Description
 
-Forecast real atmospheric CO₂ observations from lagged historical windows using an LSTM.
+I use the previous 24 weeks of Mauna Loa CO2 measurements to forecast the next weekly value with a small LSTM. The experiment uses a chronological hold-out split and fits normalization on the training period only.
 
-**Difficulty:** ★★★★  
-**Dataset:** Mauna Loa atmospheric CO₂ dataset via statsmodels  
-**Core skills:** LSTM, time series, forecasting, temporal split
+**Dataset:** Mauna Loa atmospheric CO2  
+**Main ideas:** LSTM, sequence windows, time-series forecasting, temporal validation
