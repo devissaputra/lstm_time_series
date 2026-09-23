@@ -66,16 +66,12 @@ pytest
 
 CI runs model-shape, preprocessing, baseline, and one-epoch smoke tests. The full 20-epoch experiment is not retrained on every commit.
 
-## Engineering details
+## What the baseline comparison tells us
 
-- chronological split, never random time-series splitting
-- train-only normalization
-- persistence and Ridge baselines
-- deterministic PyTorch seed and DataLoader generator
-- import-safe experiment module
-- behavioural tests and GitHub Actions
-- generated plots separated from curated portfolio graphics
+The LSTM underperforms both Ridge and persistence here. That is not a failed experiment; it is evidence that this smooth weekly series does not automatically reward recurrent complexity. A simple lag-based model is harder to beat than the architecture name might suggest.
 
-## Limits
+The chronological split and train-only normalization are therefore central to the result. Random splitting would make the task easier in a way that does not match real forecasting.
 
-This is one historical series and one forecast horizon. A stronger study would add seasonal/ARIMA baselines, rolling-origin evaluation, repeated initialization, uncertainty intervals, longer horizons, and hyperparameter selection on a validation period.
+## Where I would go next
+
+I would add seasonal and ARIMA-style baselines, switch to rolling-origin evaluation, repeat the neural training across initializations, estimate forecast uncertainty, and test longer horizons using a separate validation period for tuning.
