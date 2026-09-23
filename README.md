@@ -1,102 +1,85 @@
-# 08. LSTM Time-Series Forecasting ★★★★
+# LSTM Forecasting for Mauna Loa CO2
 
-![Cover](assets/01_cover.svg)
+![Project overview](assets/01_cover.svg)
 
-> **Quick description:** Forecast real atmospheric CO₂ observations from 24-week historical windows using a compact LSTM.
+I built this project to move from static prediction to sequence forecasting. The task is simple to state: use the previous 24 weeks of atmospheric CO2 measurements to predict the next weekly value.
 
-## Why this project matters
-This AI Engineering project demonstrates sequence modeling on a real environmental time series. Instead of randomly shuffling observations, it preserves temporal order and forecasts future CO₂ values from lagged weekly history.
+The model is a compact LSTM trained on the Mauna Loa CO2 series distributed with statsmodels.
 
-The project uses the **Mauna Loa atmospheric CO₂ dataset** from statsmodels, resamples observations weekly, interpolates missing values, constructs 24-week input windows, and trains a one-layer LSTM for one-step-ahead forecasting.
+## Data
 
-## Dataset
-- **Dataset:** Mauna Loa atmospheric CO₂
-- **Source:** statsmodels `co2` dataset
-- **Frequency:** weekly after resampling
-- **Missing values:** linearly interpolated
-- **Input window:** 24 weeks
-- **Forecast horizon:** next weekly observation
-- **Data provenance and usage:** [DATA.md](DATA.md)
+The source series is resampled to weekly means and missing weekly values are interpolated.
 
-## Research pipeline
-![Time-series forecasting pipeline](assets/02_data_pipeline.svg)
+For each training example I use:
 
-### Processing steps
-1. Load the real Mauna Loa CO₂ observations.
-2. Resample to weekly means.
-3. Interpolate missing weekly values.
-4. Standardize the series.
-5. Convert the sequence into 24-week input windows and one-step-ahead targets.
-6. Use the first 80% of windows for training and the final 20% for chronological hold-out evaluation.
-7. Train the LSTM for 20 epochs with Adam and mean-squared error loss.
-8. Convert forecasts back to the original CO₂ scale and evaluate with RMSE and MAE.
+- 24 previous weekly CO2 values as input;
+- the next weekly value as the target.
 
-## Sequence model
-![Sequence model representation](assets/03_data_or_model.svg)
+That produces 2,260 sequence windows.
 
-The implemented architecture is:
+The split is chronological:
+
+- 1,808 training windows;
+- 452 held-out windows.
+
+Normalization is fitted on the training period only, then applied to the held-out period.
+
+## How the experiment works
+
+![Forecasting pipeline](assets/02_data_pipeline.svg)
+
+The model is intentionally small:
 
 ```text
-24 weekly observations × 1 feature
-              ↓
-        LSTM hidden size 32
-              ↓
-       final hidden state
-              ↓
-          Linear 32 → 1
-              ↓
-       next-week CO₂ forecast
+24 time steps × 1 feature
+          ↓
+LSTM with 32 hidden units
+          ↓
+final hidden state
+          ↓
+Linear layer: 32 → 1
+          ↓
+next-week CO2 forecast
 ```
 
-This is a compact univariate forecasting model. The LSTM receives one CO₂ value per time step and uses its final hidden state to predict the next observation.
+Training uses Adam with learning rate 0.005 and mean-squared error loss for 20 epochs.
 
-## Chronological hold-out evaluation
-![Chronological hold-out evaluation](assets/04_evaluation_or_results.svg)
+## Sequence model
 
-Generated metrics from the included experiment:
+![Sequence model](assets/03_data_or_model.svg)
 
-```json
-{
-  "rmse": 5.781065940856934,
-  "mae": 5.34670877456665,
-  "window_weeks": 24,
-  "n_windows": 2260
-}
-```
+The LSTM reads the 24-week window in order and carries information forward through its hidden state. The final hidden state is used to predict the next value.
 
-### Interpretation
-- **RMSE = 5.7811** penalizes larger forecast errors more strongly.
-- **MAE = 5.3467** represents the average absolute forecast error in the original CO₂ scale.
-- The experiment uses **2,260 sliding windows**, each containing 24 historical weekly observations.
-- Evaluation is chronological, so the final 20% of windows are not used for model fitting.
+## Results
 
-### Methodological limitation
-The current implementation calculates the mean and standard deviation from the **full time series before the temporal split**. That leaks aggregate information from the hold-out period into preprocessing. It does not expose future target values directly to the LSTM, but a stricter experiment should fit normalization statistics on the training portion only and apply those statistics to the hold-out period.
+![Chronological evaluation](assets/04_evaluation_or_results.svg)
 
-## Reproduce
+After correcting preprocessing so normalization uses training data only, the recorded run produced:
+
+| Metric | Result |
+|---|---:|
+| RMSE | 4.4853 |
+| MAE | 4.3378 |
+| Training windows | 1,808 |
+| Test windows | 452 |
+
+The hold-out set is the final 20% of the sequence windows, so the model is always evaluated on later observations than the ones used for training.
+
+The result is useful as a compact sequence-modeling exercise, but I would not judge forecasting quality from these numbers alone. A stronger study should compare the LSTM with simple baselines such as last-value prediction, moving averages, and autoregressive models.
+
+## Run it
+
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
 python src/run_experiment.py
 ```
 
-Metrics are written to `results/metrics.json`.
+On Windows, use `.venv\Scripts\activate`.
 
-## Research documentation
-- [Scientific-style technical report](paper/paper.md)
-- [Quick description](QUICK_DESCRIPTION.md)
-- [Website-ready portfolio entry](PORTFOLIO.md)
-- [Data provenance](DATA.md)
-- [Reproducibility notes](REPRODUCIBILITY.md)
-- [Ethics and responsible use](ETHICS.md)
-- [Citation metadata](CITATION.cff)
+## Repository notes
 
-## Difficulty
-**★★★★ — advanced**
-
-## Academic integrity
-This repository is a research portfolio artifact, not a peer-reviewed publication. Reported metrics are generated by the included code on the stated real dataset.
-
-## Stronger research extension
-A stronger version would fit normalization only on the training period, compare against naive and autoregressive baselines, use rolling-origin evaluation, tune sequence length and hidden size, report uncertainty intervals, and test multi-step forecasting.
+- [DATA.md](DATA.md) describes the CO2 series.
+- [REPRODUCIBILITY.md](REPRODUCIBILITY.md) explains the temporal split and rerun steps.
+- [paper/paper.md](paper/paper.md) contains the longer technical write-up.
