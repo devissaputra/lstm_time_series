@@ -1,8 +1,17 @@
 # Data
 
-**Dataset:** Mauna Loa atmospheric CO₂ dataset via statsmodels  
-**Reference page:** https://www.statsmodels.org/stable/datasets/generated/co2.html
+This project uses the Mauna Loa atmospheric CO2 dataset distributed with statsmodels.
 
-This project uses a real public dataset distributed through the relevant scientific Python dataset loader. The experiment does not replace missing source data with randomly generated observations.
+Source documentation: https://www.statsmodels.org/stable/datasets/generated/co2.html
 
-For reproducibility, the code loads the dataset programmatically and records the sample size in `results/metrics.json` where applicable. Consult the source page for the original dataset description, citation, and usage terms.
+The raw observations are converted to weekly means and missing weekly values are interpolated.
+
+The forecasting setup uses:
+
+- 24 weeks of history per input window;
+- the following week as the target;
+- 2,260 total windows;
+- the first 1,808 windows for training;
+- the final 452 windows for chronological evaluation.
+
+Normalization statistics are calculated from the training period only.
