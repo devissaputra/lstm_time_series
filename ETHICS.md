@@ -1,5 +1,7 @@
-# Ethics and Responsible Use
+# Ethics and Limits
 
-This project is a research and learning artifact. Its models are not intended for autonomous high-stakes decisions.
+This project forecasts an environmental time series and does not use personal data.
 
-For human-related datasets, predictions should be treated as decision support, not labels of a person's ability or worth. Validate subgroup performance, document missingness and measurement bias, preserve privacy, and keep a human reviewer in the loop. For non-human datasets, document domain limits and avoid presenting benchmark performance as universal model quality.
+The main responsibility is to communicate uncertainty. A neural-network forecast can look precise even when the model has only been tested on one historical split.
+
+I would not use this experiment for scientific or policy decisions without stronger baselines, uncertainty estimates, and validation across additional time periods.
