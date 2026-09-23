@@ -1,50 +1,49 @@
-# LSTM Time-Series Forecasting: Scientific-Style Technical Report
+# LSTM Forecasting for Mauna Loa CO2
 
-**Status:** reproducible portfolio report, not peer reviewed.  
-**Difficulty:** ★★★★  
-**Dataset:** Mauna Loa atmospheric CO₂ dataset via statsmodels
+## Question
 
-## Abstract
-This project studies a concrete AI Engineering problem using a real public dataset and a fully inspectable pipeline. The project focuses on LSTM, time series, forecasting, temporal split. Its central engineering goal is to make data preparation, model fitting, evaluation, and limitations reproducible rather than treating the model as a black box.
+Can the previous 24 weeks of atmospheric CO2 measurements predict the next weekly value with a small LSTM?
 
-## 1. Research objective
-Forecast real atmospheric CO₂ observations from lagged historical windows using an LSTM.
+## Data
 
-## 2. Data
-The dataset is **Mauna Loa atmospheric CO₂ dataset via statsmodels**. Provenance and the original reference are documented in [`DATA.md`](../DATA.md).
+I use the Mauna Loa CO2 series from statsmodels. I resample it to weekly means and interpolate missing weekly values.
 
-## 3. Method
-The implemented pipeline is:
-1. Load CO2 series
-2. Interpolate gaps
-3. Window sequences
-4. LSTM
-5. Chronological forecast
+I create 2,260 sliding windows. Each input contains 24 weeks and the target is the following week.
 
-## 4. Evaluation
-**Primary metric(s):** RMSE / MAE.  
-**Validation design:** chronological hold-out.  
-The experiment saves machine-readable metrics and visual diagnostics so claims can be traced to an executable run.
+The first 1,808 windows are used for training and the final 452 are held out in chronological order.
 
-## 5. Results
-Generated metrics:
-```json
-{
-  "rmse": 5.781065940856934,
-  "mae": 5.34670877456665,
-  "window_weeks": 24,
-  "n_windows": 2260
-}
+Normalization statistics are fitted on the training period only.
+
+## Method
+
+The model contains one LSTM layer with 32 hidden units followed by a linear output layer.
+
+Training uses Adam with learning rate 0.005 and mean-squared error loss for 20 epochs.
+
+## Results
+
+After fixing the preprocessing so the hold-out period is not used to calculate normalization statistics, the recorded run produced:
+
+| Metric | Result |
+|---|---:|
+| RMSE | 4.4853 |
+| MAE | 4.3378 |
+
+## Interpretation
+
+The model follows the later CO2 series reasonably well in this small experiment, but the error values are hard to judge without baselines.
+
+The next step should not be a larger neural network. It should be a fair comparison against simple forecasting methods.
+
+## Limitations
+
+The evaluation uses one chronological split. The series also contains long-term trend and seasonal structure, so a single LSTM result does not tell me which part of the signal the model is actually exploiting.
+
+Useful baselines would include last-value prediction, seasonal naive forecasting, moving averages, and autoregressive models.
+
+## Reproduce
+
+```bash
+pip install -r requirements.txt
+python src/run_experiment.py
 ```
-
-## 6. Limitations and validity
-Key concern: nonstationarity. Benchmark performance on one dataset does not imply universal performance. The project is intended to demonstrate research engineering discipline and to provide a base for stronger comparative studies.
-
-## 7. Reproducibility
-Run `python src/run_experiment.py` from the repository root after installing `requirements.txt`.
-
-## 8. Next research extension
-Add repeated cross-validation or temporal/external validation, stronger baselines, hyperparameter sensitivity, confidence intervals, and a domain-specific error analysis.
-
-## References
-- Dataset/reference page: https://www.statsmodels.org/stable/datasets/generated/co2.html
