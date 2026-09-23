@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/devissaputra/lstm_time_series/actions/workflows/ci.yml/badge.svg)](https://github.com/devissaputra/lstm_time_series/actions/workflows/ci.yml)
 
+
+**Category:** AI Engineering
 ![Project overview](assets/01_cover.svg)
 
 A leakage-aware sequence-forecasting experiment that asks a harder question than “can an LSTM fit a time series?”:
