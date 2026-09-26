@@ -1,3 +1,5 @@
+> **Protocol correction:** missing weekly values now use past-only forward fill. Previously recorded interpolation-based scores are historical; a full corrected run is pending.
+
 # Data
 
 This project uses the Mauna Loa atmospheric CO2 dataset distributed with statsmodels.

@@ -1,0 +1,21 @@
+{
+  "question": "Can a recurrent model improve weekly CO₂ forecasts?",
+  "data": "Mauna Loa weekly CO₂ from statsmodels; 24-week input windows.",
+  "method": "Past-only forward fill; training-only normalization; chronological holdout; persistence, ridge and LSTM.",
+  "formula": "RMSE = sqrt(mean((forecast-observed)^2)); MAE = mean(|forecast-observed|).",
+  "interpretation": "The original results used linear interpolation before splitting. The corrected loader uses forward fill to avoid future borrowing. Historical scores are preserved for traceability but cannot substantiate the corrected protocol until a full rerun.",
+  "status": "CORRECTED PIPELINE | neural results require regeneration",
+  "source": "results/review_status.json",
+  "rows": [
+    {
+      "label": "Corrected full run complete",
+      "path": [
+        "corrected_full_run_complete"
+      ],
+      "unit": "boolean"
+    }
+  ],
+  "table_title": "Corrected-run status; historical scores are not reused",
+  "evidence_note": "See CALCULATIONS.md for data status, execution scope and interpretation.",
+  "finding": "This repository compares persistence, ridge autoregression, and an LSTM for weekly Mauna Loa CO₂ forecasting with 24-week input windows. Review identified future-information borrowing in the original interpolation step, which has been replaced with past-only forward filling. The earlier numerical comparison is now explicitly historical; the corrected neural experiment still requires a full rerun before its performance can be presented as verified."
+}

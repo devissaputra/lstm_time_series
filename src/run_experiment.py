@@ -1,3 +1,7 @@
+# Calculation reading guide: ../CALCULATIONS.md (repository root).
+# RMSE = sqrt(mean((forecast-observed)^2)); MAE = mean(|forecast-observed|).
+# The original results used linear interpolation before splitting. The corrected loader uses forward fill to avoid future borrowing. Historical scores are preserved for traceability but cannot substantiate the corrected protocol until a full rerun.
+
 from __future__ import annotations
 
 import json
@@ -33,7 +37,9 @@ def load_weekly_series():
         .data["co2"]
         .resample("W")
         .mean()
-        .interpolate()
+        # A missing week may only use information already observed. Linear
+        # interpolation would borrow a later measurement, including in test.
+        .ffill()
         .astype("float32")
     )
 

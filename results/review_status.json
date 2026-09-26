@@ -1,0 +1,4 @@
+{
+  "corrected_full_run_complete": false,
+  "reason": "Past-only forward fill replaces retrospective interpolation. Historical metrics are not evidence for corrected pipeline."
+}

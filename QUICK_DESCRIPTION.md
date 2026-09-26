@@ -1,5 +1,5 @@
-# Quick Description
+# LSTM Forecasting for Mauna Loa CO2
 
-A leakage-aware next-week CO2 forecasting experiment comparing persistence, Ridge autoregression, and an LSTM on a chronological hold-out set. Ridge wins, showing why recurrent models need strong time-series baselines.
+This repository compares persistence, ridge autoregression, and an LSTM for weekly Mauna Loa CO₂ forecasting with 24-week input windows. Review identified future-information borrowing in the original interpolation step, which has been replaced with past-only forward filling. The earlier numerical comparison is now explicitly historical; the corrected neural experiment still requires a full rerun before its performance can be presented as verified.
 
-**Main ideas:** LSTM, chronological evaluation, train-only normalization, persistence baseline, Ridge baseline
+See [CALCULATIONS.md](CALCULATIONS.md) for evidence and verification scope.

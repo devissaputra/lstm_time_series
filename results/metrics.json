@@ -15,5 +15,7 @@
   "lstm": {
     "rmse": 1.0700026750564575,
     "mae": 0.8539758324623108
-  }
+  },
+  "status": "historical_interpolation_run_superseded",
+  "review_note": "These values were produced with retrospective interpolation. The corrected loader uses past-only forward fill; rerun required before using these as current performance evidence."
 }
