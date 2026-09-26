@@ -9,13 +9,11 @@
     "mae": 0.40420472621917725
   },
   "ridge": {
-    "rmse": 0.46408501267433167,
-    "mae": 0.35460272431373596
+    "rmse": 0.46388331055641174,
+    "mae": 0.35381680727005005
   },
   "lstm": {
-    "rmse": 1.0700026750564575,
-    "mae": 0.8539758324623108
-  },
-  "status": "historical_interpolation_run_superseded",
-  "review_note": "These values were produced with retrospective interpolation. The corrected loader uses past-only forward fill; rerun required before using these as current performance evidence."
+    "rmse": 1.0750672817230225,
+    "mae": 0.8599361777305603
+  }
 }

@@ -1,4 +1,4 @@
-> **Protocol correction:** missing weekly values now use past-only forward fill. Previously recorded interpolation-based scores are historical; a full corrected run is pending.
+> Corrected full run completed successfully: https://github.com/devissaputra/lstm_time_series/actions/runs/36235069744
 
 # Reproducing the experiment
 

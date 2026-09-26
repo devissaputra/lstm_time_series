@@ -1,4 +1,9 @@
 {
-  "corrected_full_run_complete": false,
-  "reason": "Past-only forward fill replaces retrospective interpolation. Historical metrics are not evidence for corrected pipeline."
+  "corrected_full_run_complete": true,
+  "preprocessing": "past-only forward fill",
+  "workflow_run": "https://github.com/devissaputra/lstm_time_series/actions/runs/36235069744",
+  "source_commit": "35725a8994274d7cfe22cfe6d4597f5721eb64ab",
+  "artifact_id": 10903857513,
+  "epochs": 20,
+  "seed": 42
 }

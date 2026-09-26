@@ -1,4 +1,4 @@
-> **Protocol correction:** missing weekly values now use past-only forward fill. Previously recorded interpolation-based scores are historical; a full corrected run is pending.
+> Corrected full run completed successfully: https://github.com/devissaputra/lstm_time_series/actions/runs/36235069744
 
 # Data
 
@@ -6,7 +6,7 @@ This project uses the Mauna Loa atmospheric CO2 dataset distributed with statsmo
 
 Source documentation: https://www.statsmodels.org/stable/datasets/generated/co2.html
 
-The raw observations are converted to weekly means and missing weekly values are interpolated.
+The raw observations are converted to weekly means and missing weekly values are forward-filled.
 
 The forecasting setup uses:
 

@@ -1,94 +1,59 @@
-# LSTM Forecasting for Mauna Loa CO2
+# LSTM Forecasting for Mauna Loa CO₂
 
-This repository compares persistence, ridge autoregression, and an LSTM for weekly Mauna Loa CO₂ forecasting with 24-week input windows. Review identified future-information borrowing in the original interpolation step, which has been replaced with past-only forward filling. The earlier numerical comparison is now explicitly historical; the corrected neural experiment still requires a full rerun before its performance can be presented as verified.
-
-## Start here
-
-- [Calculations, evidence and verification scope](CALCULATIONS.md)
-- [Figure sources and exact numerical paths](docs/figure_spec.json)
-- [Working paper](paper/paper.md)
-- [Data and provenance](DATA.md)
-
-![Study question, data, design and interpretation](assets/review_overview.svg)
-
-![Defined calculation and source-linked evidence](assets/review_calculations.svg)
-
-**Review scope:** The existing suite requires unavailable dependencies; no full-suite pass is claimed. The complete data/model experiment was not rerun in this review. The old results used interpolation and are superseded for the corrected protocol; PyTorch is unavailable here.
-
-## Detailed project documentation
-
-**Historical protocol below:** any numerical result or model ranking in this older documentation belongs to the interpolation-based run. It is not evidence for the corrected forward-fill protocol.
+This experiment compares persistence, ridge autoregression, and a compact LSTM for next-week Mauna Loa CO₂ forecasting. Missing weeks now use past-only forward filling, and the corrected 20-epoch experiment has been rerun successfully in GitHub Actions. On the 452-week chronological holdout, ridge achieves RMSE 0.4639 ppm, persistence 0.5135 ppm, and the LSTM 1.0751 ppm. The recurrent model therefore does not justify its added complexity in this fixed-seed setup.
 
 [![CI](https://github.com/devissaputra/lstm_time_series/actions/workflows/ci.yml/badge.svg)](https://github.com/devissaputra/lstm_time_series/actions/workflows/ci.yml)
 
+## Read the evidence
 
-**Category:** AI Engineering
+- [Calculation guide](CALCULATIONS.md)
+- [Working paper](paper/paper.md)
+- [Data](DATA.md) and [reproduction instructions](REPRODUCIBILITY.md)
+- [Successful corrected run](https://github.com/devissaputra/lstm_time_series/actions/runs/36235069744) and [run provenance](results/review_status.json)
 
-A leakage-aware sequence-forecasting experiment that asks a harder question than “can an LSTM fit a time series?”:
+![Study overview](assets/review_overview.svg)
 
-> **Can the LSTM beat simple forecasting baselines on a chronological hold-out set?**
+![Calculation and corrected evidence](assets/review_calculations.svg)
 
-## Data and split
+## Research question
 
-The project uses the Mauna Loa atmospheric CO2 series distributed with statsmodels.
+Can a compact recurrent model improve next-week forecasts over persistence and a linear autoregression when the evaluation respects observation time?
 
-- weekly resampling with interpolation
-- 24 previous weeks → next-week target
-- 2,260 windows
-- first 80% for training, final 20% for testing
-- normalization fitted only on the training period
+## Data and temporal boundaries
 
-No future observations are used to estimate the training mean or standard deviation.
+The source is the Mauna Loa CO₂ series bundled with statsmodels. Weekly observations are resampled and missing weeks are forward-filled using only a preceding observation. The earlier linear interpolation step could borrow a future measurement and has been removed. Older interpolation-based scores are superseded by the corrected run linked above.
 
-## Models
+Each input contains the previous 24 weekly values. The resulting 2,260 windows are split into 1,808 training and 452 test windows in time order. The mean and standard deviation are calculated only from observations available through the final training target.
 
+MAE and RMSE are calculated after reversing training-fitted normalization and are reported in ppm. Later test predictions use earlier observed test values, so this is one-step rolling evaluation rather than a recursive forecast from one origin. One seed, fixed hyperparameters and one test era limit generalization.
 
-Three approaches are compared:
+## Comparators
 
-1. **Persistence:** predict the next value as the last observed value.
-2. **Ridge autoregression:** fit a linear model to the 24-lag window.
-3. **LSTM:** 32 hidden units followed by a linear head.
+Persistence repeats the last observed concentration. Ridge regression uses the same 24-lag input with alpha 1.0. The LSTM has 32 hidden units and a linear output layer; it trains for 20 epochs with Adam, learning rate 0.005 and batch size 64. These settings are fixed, not selected on the test set.
 
-The LSTM uses Adam, learning rate 0.005, batch size 64, and 20 epochs.
+## Corrected results
 
-## Recorded results
-
-
-| Model | RMSE ↓ | MAE ↓ |
+| Model | RMSE (ppm) ↓ | MAE (ppm) ↓ |
 |---|---:|---:|
-| Persistence | 0.5135 | 0.4042 |
-| **Ridge** | **0.4641** | **0.3546** |
-| LSTM | 1.0700 | 0.8540 |
+| persistence | 0.5135 | 0.4042 |
+| ridge | 0.4639 | 0.3538 |
+| lstm | 1.0751 | 0.8599 |
 
+Ridge has the smallest error under both metrics. The result is useful precisely because the more complex model does not win. It does not imply that all recurrent models underperform on atmospheric time series.
 
-The neural model does **not** win. Ridge is strongest on this setup, and even persistence beats the LSTM. That is a useful result: recurrent complexity is not automatically valuable when a smooth, highly autocorrelated series can be forecast well from recent lags.
-
-## Run
+## Reproduce
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python src/run_experiment.py
+python scripts/build_review_figures.py
+python scripts/build_review_figures.py --check
 ```
 
-Generated outputs are written under `results/`.
+The runner saves unrounded metrics and forecast plots. Install pytest and run `PYTHONPATH=. python -m pytest -q` to run the existing tests. A regression test supplies a missing week between values 1 and 100 and verifies that the loader fills it with 1, not an interpolated future-dependent value.
 
-## Test
+## Validation and limitations
 
-```bash
-pip install pytest
-pytest
-```
-
-CI runs model-shape, preprocessing, baseline, and one-epoch smoke tests. The full 20-epoch experiment is not retrained on every commit.
-
-## What the baseline comparison tells us
-
-The LSTM underperforms both Ridge and persistence here. That is not a failed experiment; it is evidence that this smooth weekly series does not automatically reward recurrent complexity. A simple lag-based model is harder to beat than the architecture name might suggest.
-
-The chronological split and train-only normalization are therefore central to the result. Random splitting would make the task easier in a way that does not match real forecasting.
-
-## Where I would go next
-
-I would add seasonal and ARIMA-style baselines, switch to rolling-origin evaluation, repeat the neural training across initializations, estimate forecast uncertainty, and test longer horizons using a separate validation period for tuning.
+The corrected full experiment and CI both succeeded in GitHub Actions. No repeated-seed confidence interval is claimed. This benchmark still needs additional forecast origins, independently chosen validation periods, seasonal/statistical baselines and sensitivity to missing-data policy before supporting a stronger comparative claim.

@@ -5,7 +5,6 @@
 \author{Devis W. Saputra}
 \date{}
 \begin{document}
-\textbf{Historical results: corrected forward-fill protocol requires a full rerun.}
 
 \maketitle
 \begin{abstract}
@@ -19,16 +18,14 @@ Twenty-four previous weekly observations predict the next value. The first 80\% 
 Model & RMSE & MAE \\
 \midrule
 Persistence & 0.5135 & 0.4042 \\
-Ridge & 0.4641 & 0.3546 \\
-LSTM & 1.0700 & 0.8540 \\
+Ridge & 0.4639 & 0.3538 \\
+LSTM & 1.0751 & 0.8599 \\
 \bottomrule
 \end{tabular}
 \section{Interpretation}
 Ridge performs best in this recorded run. The result shows that recurrent complexity does not automatically improve a smooth, autocorrelated series.
-\section{Calculation audit and reproduction scope}
-This repository compares persistence, ridge autoregression, and an LSTM for weekly Mauna Loa CO₂ forecasting with 24-week input windows. Review identified future-information borrowing in the original interpolation step, which has been replaced with past-only forward filling. The earlier numerical comparison is now explicitly historical; the corrected neural experiment still requires a full rerun before its performance can be presented as verified.
-
-The original results used linear interpolation before splitting. The corrected loader uses forward fill to avoid future borrowing. Historical scores are preserved for traceability but cannot substantiate the corrected protocol until a full rerun.
-
-See the repository calculation guide for exact source paths. The full experiment was not independently rerun during this documentation review.
+\section{Temporal validity and reproduction}
+Missing weeks use past-only forward filling. The corrected full 20-epoch experiment and CI succeeded in GitHub Actions run 36235069744. Errors are calculated in ppm after reversing training-fitted normalization. Test predictions use already observed history, not a recursive forecast from one origin.
+\section{Limitations}
+One seed, one test era and fixed hyperparameters limit generalization. No uncertainty interval or universal architecture ranking is claimed. The Markdown working paper provides the fuller interpretation and reproduction record.
 \end{document}

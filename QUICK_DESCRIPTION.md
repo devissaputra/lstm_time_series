@@ -1,5 +1,5 @@
-# LSTM Forecasting for Mauna Loa CO2
+# LSTM Forecasting for Mauna Loa CO₂
 
-This repository compares persistence, ridge autoregression, and an LSTM for weekly Mauna Loa CO₂ forecasting with 24-week input windows. Review identified future-information borrowing in the original interpolation step, which has been replaced with past-only forward filling. The earlier numerical comparison is now explicitly historical; the corrected neural experiment still requires a full rerun before its performance can be presented as verified.
+This experiment compares persistence, ridge autoregression, and a compact LSTM for next-week Mauna Loa CO₂ forecasting. Missing weeks now use past-only forward filling, and the corrected 20-epoch experiment has been rerun successfully in GitHub Actions. On the 452-week chronological holdout, ridge achieves RMSE 0.4639 ppm, persistence 0.5135 ppm, and the LSTM 1.0751 ppm. The recurrent model therefore does not justify its added complexity in this fixed-seed setup.
 
-See [CALCULATIONS.md](CALCULATIONS.md) for evidence and verification scope.
+[Calculations and evidence](CALCULATIONS.md)
